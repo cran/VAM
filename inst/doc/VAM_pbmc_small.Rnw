@@ -1,0 +1,79 @@
+%\VignetteIndexEntry{Seurat pbmc_small example}
+\documentclass[11pt, nogin]{article}
+\usepackage[noae]{Sweave}
+\usepackage[margin=0.75in]{geometry}
+\SweaveOpts{keep.source=T}
+\title{Application of VAM to Seurat pbmc\_small scRNA-seq data using Seurat log normalization.}
+\author{H. Robert Frost}
+\begin{document}
+\date{}
+\setkeys{Gin}{width=1\textwidth} 
+\maketitle
+
+\section{Load the VAM package}
+
+\noindent Loading VAM will also load the required packages Seurat and MASS.
+<<fig=F, echo=T>>=
+library(VAM)
+if (!requireNamespace("Seurat", quietly=TRUE)) {
+   stop("Seurat package not available!")
+}
+@
+
+\section{Summary statistics for the pbmc\_small scRNA-seq data}
+
+This example uses the pbmc\_small data set included in the Seurat package and a single contrived gene set. Please see the other vignettes for more realistic examples using larger scRNA-seq data sets and gene set collections based on MSigDB.
+
+<<fig=F, echo=T>>=
+Seurat::pbmc_small
+gene.names = rownames(Seurat::pbmc_small)
+gene.names[1:5]
+Seurat::VariableFeatures(Seurat::pbmc_small)[1:5]
+@
+
+\section{Define gene set collection}
+
+A gene set collection containing just a single contrived set (containing the top 5 variable genes) will be used for this example. 
+
+<<fig=F, echo=T>>=
+gene.set.name = "Test"
+gene.ids = c("PPBP", "IGLL5", "VDAC3", "CD1C", "AKR1C3")
+# Create a collection list for this gene set
+gene.set.id.list = list()
+gene.set.id.list[[1]] = gene.ids
+names(gene.set.id.list)[1] = gene.set.name
+gene.set.id.list
+# Create the list of gene indices required by vamForSeurat()
+(gene.set.collection = createGeneSetCollection(gene.ids=gene.names,
+	gene.set.collection=gene.set.id.list))
+gene.indices = gene.set.collection[[1]]
+(gene.names = gene.names[gene.indices])
+@
+
+\section{Execute VAM method}
+
+Since the scRNA-seq data has been processed using Seurat, we execute VAM using the vamForSeurat() function. We have set return.dist=T so that the squared adjusted Mahalanobis distances will be returned in a "VAMdist" Assay.
+
+<<fig=F, echo=T>>=
+pbmc.vam = vamForSeurat(seurat.data=Seurat::pbmc_small,
+    gene.set.collection=gene.set.collection,
+    center=F, gamma=T, sample.cov=F, return.dist=T)
+@
+
+Look at the first few entries in the "VAMdist" and "VAMcdf" Assays.
+
+<<fig=F, echo=T>>=
+pbmc.vam@assays$VAMdist[1,1:10]
+pbmc.vam@assays$VAMcdf[1,1:10]
+@
+
+\section{Visualize VAM scores}
+
+Visualize VAM scores using Seurat FeaturePlot(). The default Assay must first be changed to "VAMcdf".
+
+<<fig=T, echo=T>>=
+Seurat::DefaultAssay(object = pbmc.vam) = "VAMcdf"
+Seurat::FeaturePlot(pbmc.vam, reduction="tsne", features=gene.set.name)
+@
+
+\end{document}

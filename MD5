@@ -1,0 +1,17 @@
+ba05dd72dcd61df6f64914ce71fe3929 *DESCRIPTION
+b1f32f90e24bef5115f24da4feb68b30 *NAMESPACE
+8ff82eda5152b057bbc565538e7861a9 *R/SeuratWrapperForVAM.R
+bec0487fb55a5c9adbc08836782015f7 *R/VAM.R
+b30254c7a19cc8c72c0b3f1247d6851e *build/vignette.rds
+497551df4dc0b38162d35f944451d30b *inst/doc/VAM_PBMC3K_Hallmark_LogNormalization.pdf
+968fd63c669fd47a7396fc8bada7e125 *inst/doc/VAM_PBMC3K_LogNormalization.pdf
+8ca8823443cdfe664bf0da18afbc52d0 *inst/doc/VAM_PBMC3K_SCTransform.pdf
+3605be7ff069f456adc29cf0f6450b26 *inst/doc/VAM_pbmc_small.R
+d9844a3cd8ab08a65fa19eb79abbdf4a *inst/doc/VAM_pbmc_small.Rnw
+5905f6d74d818d5aacf6a3a6fdfd54b5 *inst/doc/VAM_pbmc_small.pdf
+8a83c26f199d81665d1b6f43d0450f0d *man/CreateGeneSetCollection.Rd
+7b42bbb67b9ea211f9fe04e283796fb4 *man/VAM-package.Rd
+544186727dd280d061bde2d1b684d828 *man/VAM.Rd
+334f75610bd8cbe13ff6260fc380f2fb *man/VAMForCollection.Rd
+383888463ffade2707b5b3e1116c9066 *man/VAMForSeurat.Rd
+d9844a3cd8ab08a65fa19eb79abbdf4a *vignettes/VAM_pbmc_small.Rnw
