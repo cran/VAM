@@ -18,17 +18,20 @@ library(VAM)
 if (!requireNamespace("Seurat", quietly=TRUE)) {
    stop("Seurat package not available!")
 }
+if (!requireNamespace("SeuratObject", quietly=TRUE)) {
+   stop("SeuratObject package not available!")
+}
 @
 
 \section{Summary statistics for the pbmc\_small scRNA-seq data}
 
-This example uses the pbmc\_small data set included in the Seurat package and a single contrived gene set. Please see the other vignettes for more realistic examples using larger scRNA-seq data sets and gene set collections based on MSigDB.
+This example uses the pbmc\_small data set included in the SeuratObject package and a single contrived gene set. Please see the other vignettes for more realistic examples using larger scRNA-seq data sets and gene set collections based on MSigDB.
 
 <<fig=F, echo=T>>=
-Seurat::pbmc_small
-gene.names = rownames(Seurat::pbmc_small)
+SeuratObject::pbmc_small
+gene.names = rownames(SeuratObject::pbmc_small)
 gene.names[1:5]
-Seurat::VariableFeatures(Seurat::pbmc_small)[1:5]
+Seurat::VariableFeatures(SeuratObject::pbmc_small)[1:5]
 @
 
 \section{Define gene set collection}
@@ -55,7 +58,7 @@ gene.indices = gene.set.collection[[1]]
 Since the scRNA-seq data has been processed using Seurat, we execute VAM using the vamForSeurat() function. We have set return.dist=T so that the squared adjusted Mahalanobis distances will be returned in a "VAMdist" Assay.
 
 <<fig=F, echo=T>>=
-pbmc.vam = vamForSeurat(seurat.data=Seurat::pbmc_small,
+pbmc.vam = vamForSeurat(seurat.data=SeuratObject::pbmc_small,
     gene.set.collection=gene.set.collection,
     center=F, gamma=T, sample.cov=F, return.dist=T)
 @

@@ -1,25 +1,28 @@
 ### R code from vignette source 'VAM_pbmc_small.Rnw'
 
 ###################################################
-### code chunk number 1: VAM_pbmc_small.Rnw:16-20
+### code chunk number 1: VAM_pbmc_small.Rnw:16-23
 ###################################################
 library(VAM)
 if (!requireNamespace("Seurat", quietly=TRUE)) {
    stop("Seurat package not available!")
 }
+if (!requireNamespace("SeuratObject", quietly=TRUE)) {
+   stop("SeuratObject package not available!")
+}
 
 
 ###################################################
-### code chunk number 2: VAM_pbmc_small.Rnw:27-31
+### code chunk number 2: VAM_pbmc_small.Rnw:30-34
 ###################################################
-Seurat::pbmc_small
-gene.names = rownames(Seurat::pbmc_small)
+SeuratObject::pbmc_small
+gene.names = rownames(SeuratObject::pbmc_small)
 gene.names[1:5]
-Seurat::VariableFeatures(Seurat::pbmc_small)[1:5]
+Seurat::VariableFeatures(SeuratObject::pbmc_small)[1:5]
 
 
 ###################################################
-### code chunk number 3: VAM_pbmc_small.Rnw:38-50
+### code chunk number 3: VAM_pbmc_small.Rnw:41-53
 ###################################################
 gene.set.name = "Test"
 gene.ids = c("PPBP", "IGLL5", "VDAC3", "CD1C", "AKR1C3")
@@ -36,22 +39,22 @@ gene.indices = gene.set.collection[[1]]
 
 
 ###################################################
-### code chunk number 4: VAM_pbmc_small.Rnw:57-60
+### code chunk number 4: VAM_pbmc_small.Rnw:60-63
 ###################################################
-pbmc.vam = vamForSeurat(seurat.data=Seurat::pbmc_small,
+pbmc.vam = vamForSeurat(seurat.data=SeuratObject::pbmc_small,
     gene.set.collection=gene.set.collection,
     center=F, gamma=T, sample.cov=F, return.dist=T)
 
 
 ###################################################
-### code chunk number 5: VAM_pbmc_small.Rnw:65-67
+### code chunk number 5: VAM_pbmc_small.Rnw:68-70
 ###################################################
 pbmc.vam@assays$VAMdist[1,1:10]
 pbmc.vam@assays$VAMcdf[1,1:10]
 
 
 ###################################################
-### code chunk number 6: VAM_pbmc_small.Rnw:74-76
+### code chunk number 6: VAM_pbmc_small.Rnw:77-79
 ###################################################
 Seurat::DefaultAssay(object = pbmc.vam) = "VAMcdf"
 Seurat::FeaturePlot(pbmc.vam, reduction="tsne", features=gene.set.name)

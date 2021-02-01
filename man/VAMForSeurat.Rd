@@ -40,12 +40,12 @@ Updated Seurat object that hold the VAM results in one or two new Assay objects:
 \keyword{file}
 \examples{
     # Only run example code if Seurat package is available
-    if (requireNamespace("Seurat", quietly=TRUE)) {
+    if (requireNamespace("Seurat", quietly=TRUE) & requireNamespace("SeuratObject", quietly=TRUE)) {
         # Define a collection with one gene set for the first 10 genes
         collection=list(set1=1:10)
-        # Execute on the pbmc_small scRNA-seq data set included with Seurat
+        # Execute on the pbmc_small scRNA-seq data set included with SeuratObject
         # See vignettes for more detailed Seurat examples
-        vamForSeurat(seurat.data=Seurat::pbmc_small,
+        vamForSeurat(seurat.data=SeuratObject::pbmc_small,
             gene.set.collection=collection)
     }
 }

@@ -258,7 +258,7 @@ vamForCollection = function(gene.expr, gene.set.collection, tech.var.prop, cente
   set.sizes = unlist(lapply(gene.set.collection, length))
   min.set.size = min(set.sizes)
   median.set.size = median(set.sizes)  
-  
+    
   # Prepare the result matrices
   results = list()
   results$distance.sq = matrix(0, nrow=n, ncol=num.sets,
@@ -278,14 +278,17 @@ vamForCollection = function(gene.expr, gene.set.collection, tech.var.prop, cente
       #message("Set members: ", paste0(set.members, collapse=","))
     }
     set.exprs = gene.expr[,set.members]   
-    # TODO: make sure this works for sets of size 1
-    if (length(set.members) == 1) {
+
+    if (set.size == 1) {
       # Force vector to matrix
       warning("Gene set ", i, " has just a single member!")
       set.exprs = as.matrix(set.exprs)
     }
     # Execute VAM for this set
     if (!missing(tech.var.prop)) {
+      # Work-around that supports a collection object that is a list of vectors of gene IDs vs.
+      # list of vectors of gene indices as created via createGeneSetCollection()
+      names(tech.var.prop) = colnames(gene.expr)
       vam.results = vam(gene.expr=set.exprs, tech.var.prop=tech.var.prop[set.members],
           center=center, gamma=gamma)
     } else {

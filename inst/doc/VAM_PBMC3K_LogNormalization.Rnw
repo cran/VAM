@@ -1,0 +1,6 @@
+%\VignetteIndexEntry{10x PBMC 3k log normalization example}
+\documentclass{article}
+\usepackage{pdfpages}
+\begin{document}
+\includepdf[pages=-, fitpaper=true]{./VAM_PBMC3K_LogNormalization_tmp.pdf}
+\end{document}

@@ -2,7 +2,7 @@
 \alias{VAM-package}
 \docType{package}
 \title{
-Variance-adjusted Mahalanobis
+Variance-Adjusted Mahalanobis
 }
 \description{
 Implementation of Variance-adjusted Mahalanobis (VAM), a method for cell-specific gene set scoring of scRNA-seq data.
@@ -11,8 +11,8 @@ Implementation of Variance-adjusted Mahalanobis (VAM), a method for cell-specifi
 \tabular{ll}{
 Package: \tab VAM\cr
 Type: \tab Package\cr
-Version: \tab 0.1.0 \cr
-Date: \tab 2020\cr
+Version: \tab 0.5.0 \cr
+Date: \tab 2021\cr
 License: \tab GPL-2 \cr
 }
 }
@@ -25,7 +25,7 @@ H. Robert Frost
     }
 }
 \note{
-This work was supported by the National Institutes of Health grants K01LM012426 and P20GM130454.
+This work was supported by the National Institutes of Health grants K01LM012426, R21CA253408, P20GM130454 and P30CA023108.
 }
 \keyword{ package }
 

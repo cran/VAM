@@ -1,0 +1,6 @@
+%\VignetteIndexEntry{10x PBMC 3k log normalization Hallmark collection example}
+\documentclass{article}
+\usepackage{pdfpages}
+\begin{document}
+\includepdf[pages=-, fitpaper=true]{./VAM_PBMC3K_Hallmark_LogNormalization_tmp.pdf}
+\end{document}
