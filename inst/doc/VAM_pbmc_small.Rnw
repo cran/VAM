@@ -1,4 +1,4 @@
-%\VignetteIndexEntry{Seurat pbmc_small example}
+%\VignetteIndexEntry{Seurat pbmc_small log normalization example}
 \documentclass[11pt, nogin]{article}
 \usepackage[noae]{Sweave}
 \usepackage[margin=0.75in]{geometry}
@@ -17,9 +17,6 @@
 library(VAM)
 if (!requireNamespace("Seurat", quietly=TRUE)) {
    stop("Seurat package not available!")
-}
-if (!requireNamespace("SeuratObject", quietly=TRUE)) {
-   stop("SeuratObject package not available!")
 }
 @
 

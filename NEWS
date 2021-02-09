@@ -1,3 +1,10 @@
+Changes in VAM v0.5.1 
+========================
+
+* Update for new SCTransform metadata structure
+* Added new short SCTransform vignette
+
+
 Changes in VAM v0.5.0 
 ========================
 

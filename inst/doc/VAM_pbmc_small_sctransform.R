@@ -1,7 +1,7 @@
-### R code from vignette source 'VAM_pbmc_small.Rnw'
+### R code from vignette source 'VAM_pbmc_small_sctransform.Rnw'
 
 ###################################################
-### code chunk number 1: VAM_pbmc_small.Rnw:16-20
+### code chunk number 1: VAM_pbmc_small_sctransform.Rnw:15-19
 ###################################################
 library(VAM)
 if (!requireNamespace("Seurat", quietly=TRUE)) {
@@ -10,19 +10,28 @@ if (!requireNamespace("Seurat", quietly=TRUE)) {
 
 
 ###################################################
-### code chunk number 2: VAM_pbmc_small.Rnw:27-31
+### code chunk number 2: VAM_pbmc_small_sctransform.Rnw:26-29
 ###################################################
 SeuratObject::pbmc_small
 gene.names = rownames(SeuratObject::pbmc_small)
 gene.names[1:5]
-Seurat::VariableFeatures(SeuratObject::pbmc_small)[1:5]
 
 
 ###################################################
-### code chunk number 3: VAM_pbmc_small.Rnw:38-50
+### code chunk number 3: VAM_pbmc_small_sctransform.Rnw:34-39
+###################################################
+pbmc_sctransform = Seurat::SCTransform(SeuratObject::pbmc_small, verbose=F)
+# Compute PCA and UMAP on the normalized values
+pbmc_sctransform = Seurat::RunPCA(pbmc_sctransform, npcs=10)
+pbmc_sctransform = Seurat::RunUMAP(pbmc_sctransform, dims = 1:10) 
+Seurat::VariableFeatures(pbmc_sctransform)[1:5]
+
+
+###################################################
+### code chunk number 4: VAM_pbmc_small_sctransform.Rnw:46-58
 ###################################################
 gene.set.name = "Test"
-gene.ids = c("PPBP", "IGLL5", "VDAC3", "CD1C", "AKR1C3")
+gene.ids = c("NKG7", "PPBP", "GNLY", "PF4", "GNG11")
 # Create a collection list for this gene set
 gene.set.id.list = list()
 gene.set.id.list[[1]] = gene.ids
@@ -36,22 +45,22 @@ gene.indices = gene.set.collection[[1]]
 
 
 ###################################################
-### code chunk number 4: VAM_pbmc_small.Rnw:57-60
+### code chunk number 5: VAM_pbmc_small_sctransform.Rnw:65-68
 ###################################################
-pbmc.vam = vamForSeurat(seurat.data=SeuratObject::pbmc_small,
+pbmc.vam = vamForSeurat(seurat.data=pbmc_sctransform,
     gene.set.collection=gene.set.collection,
     center=F, gamma=T, sample.cov=F, return.dist=T)
 
 
 ###################################################
-### code chunk number 5: VAM_pbmc_small.Rnw:65-67
+### code chunk number 6: VAM_pbmc_small_sctransform.Rnw:73-75
 ###################################################
 pbmc.vam@assays$VAMdist[1,1:10]
 pbmc.vam@assays$VAMcdf[1,1:10]
 
 
 ###################################################
-### code chunk number 6: VAM_pbmc_small.Rnw:74-76
+### code chunk number 7: VAM_pbmc_small_sctransform.Rnw:82-84
 ###################################################
 Seurat::DefaultAssay(object = pbmc.vam) = "VAMcdf"
 Seurat::FeaturePlot(pbmc.vam, reduction="tsne", features=gene.set.name)
