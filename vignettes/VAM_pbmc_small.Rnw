@@ -12,12 +12,8 @@
 
 \section{Load the VAM package}
 
-\noindent Loading VAM will also load the required packages Seurat and MASS.
 <<fig=F, echo=T>>=
 library(VAM)
-if (!requireNamespace("Seurat", quietly=TRUE)) {
-   stop("Seurat package not available!")
-}
 @
 
 \section{Summary statistics for the pbmc\_small scRNA-seq data}
@@ -25,10 +21,14 @@ if (!requireNamespace("Seurat", quietly=TRUE)) {
 This example uses the pbmc\_small data set included in the SeuratObject package and a single contrived gene set. Please see the other vignettes for more realistic examples using larger scRNA-seq data sets and gene set collections based on MSigDB.
 
 <<fig=F, echo=T>>=
-SeuratObject::pbmc_small
-gene.names = rownames(SeuratObject::pbmc_small)
-gene.names[1:5]
-Seurat::VariableFeatures(SeuratObject::pbmc_small)[1:5]
+if (requireNamespace("Seurat", quietly=TRUE)) {
+	SeuratObject::pbmc_small
+	gene.names = rownames(SeuratObject::pbmc_small)
+	gene.names[1:5]
+	Seurat::VariableFeatures(SeuratObject::pbmc_small)[1:5]
+} else {
+	message("Seurat package not available! Not executing associated vignette content.")
+}	
 @
 
 \section{Define gene set collection}
@@ -36,18 +36,22 @@ Seurat::VariableFeatures(SeuratObject::pbmc_small)[1:5]
 A gene set collection containing just a single contrived set (containing the top 5 variable genes) will be used for this example. 
 
 <<fig=F, echo=T>>=
-gene.set.name = "Test"
-gene.ids = c("PPBP", "IGLL5", "VDAC3", "CD1C", "AKR1C3")
-# Create a collection list for this gene set
-gene.set.id.list = list()
-gene.set.id.list[[1]] = gene.ids
-names(gene.set.id.list)[1] = gene.set.name
-gene.set.id.list
-# Create the list of gene indices required by vamForSeurat()
-(gene.set.collection = createGeneSetCollection(gene.ids=gene.names,
-	gene.set.collection=gene.set.id.list))
-gene.indices = gene.set.collection[[1]]
+if (requireNamespace("Seurat", quietly=TRUE)) {
+	gene.set.name = "Test"
+	gene.ids = c("PPBP", "IGLL5", "VDAC3", "CD1C", "AKR1C3")
+	# Create a collection list for this gene set
+	gene.set.id.list = list()
+	gene.set.id.list[[1]] = gene.ids
+	names(gene.set.id.list)[1] = gene.set.name
+	gene.set.id.list
+	# Create the list of gene indices required by vamForSeurat()
+	(gene.set.collection = createGeneSetCollection(gene.ids=gene.names,
+		gene.set.collection=gene.set.id.list))
+	gene.indices = gene.set.collection[[1]]
 (gene.names = gene.names[gene.indices])
+} else {
+	message("Seurat package not available! Not executing associated vignette content.")
+}	
 @
 
 \section{Execute VAM method}
@@ -55,16 +59,24 @@ gene.indices = gene.set.collection[[1]]
 Since the scRNA-seq data has been processed using Seurat, we execute VAM using the vamForSeurat() function. We have set return.dist=T so that the squared adjusted Mahalanobis distances will be returned in a "VAMdist" Assay.
 
 <<fig=F, echo=T>>=
-pbmc.vam = vamForSeurat(seurat.data=SeuratObject::pbmc_small,
-    gene.set.collection=gene.set.collection,
-    center=F, gamma=T, sample.cov=F, return.dist=T)
+if (requireNamespace("Seurat", quietly=TRUE)) {
+	pbmc.vam = vamForSeurat(seurat.data=SeuratObject::pbmc_small,
+	    gene.set.collection=gene.set.collection,
+	    center=F, gamma=T, sample.cov=F, return.dist=T)
+} else {
+	message("Seurat package not available! Not executing associated vignette content.")
+}	
 @
 
 Look at the first few entries in the "VAMdist" and "VAMcdf" Assays.
 
 <<fig=F, echo=T>>=
-pbmc.vam@assays$VAMdist[1,1:10]
-pbmc.vam@assays$VAMcdf[1,1:10]
+if (requireNamespace("Seurat", quietly=TRUE)) {
+	pbmc.vam@assays$VAMdist[1,1:10]
+	pbmc.vam@assays$VAMcdf[1,1:10]
+} else {
+	message("Seurat package not available! Not executing associated vignette content.")
+}	
 @
 
 \section{Visualize VAM scores}
@@ -72,8 +84,17 @@ pbmc.vam@assays$VAMcdf[1,1:10]
 Visualize VAM scores using Seurat FeaturePlot(). The default Assay must first be changed to "VAMcdf".
 
 <<fig=T, echo=T>>=
-Seurat::DefaultAssay(object = pbmc.vam) = "VAMcdf"
-Seurat::FeaturePlot(pbmc.vam, reduction="tsne", features=gene.set.name)
+if (requireNamespace("Seurat", quietly=TRUE)) {
+	Seurat::DefaultAssay(object = pbmc.vam) = "VAMcdf"
+	Seurat::FeaturePlot(pbmc.vam, reduction="tsne", features=gene.set.name)
+} else {
+	message("Seurat package not available! Not executing associated vignette content.")
+	par(mar = c(0,0,0,0))
+	plot(c(0, 1), c(0, 1), ann = F, bty = 'n', type = 'n', xaxt = 'n', yaxt = 'n')
+	text(x = 0.5, y = 0.5,paste("Seurat package not available!\n",
+					 "FeaturePlot not generated."),
+	cex = 1.6, col = "black")
+}	
 @
 
 \end{document}
