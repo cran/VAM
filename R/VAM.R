@@ -52,6 +52,11 @@ vam = function(gene.expr, tech.var.prop, center=FALSE, gamma=TRUE){
     genes.to.keep = which(mean.values > 0)
     mean.values = mean.values[genes.to.keep]
     gene.expr = gene.expr[,genes.to.keep]
+    if (length(genes.to.keep) == 1) {
+      # Force vector to matrix
+      warning("Gene set has just a single member after removing genes with 0 mean values!")
+      gene.expr = as.matrix(gene.expr)
+    }            
     if (!missing(tech.var.prop)) {    
       tech.var.prop = tech.var.prop[genes.to.keep]
     }
@@ -67,6 +72,11 @@ vam = function(gene.expr, tech.var.prop, center=FALSE, gamma=TRUE){
     genes.to.keep = which(gene.var > 0)
     mean.values = mean.values[genes.to.keep]
     gene.expr = gene.expr[,genes.to.keep]
+    if (length(genes.to.keep) == 1) {
+      # Force vector to matrix
+      warning("Gene set has just a single member after removing genes with 0 variance!")
+      gene.expr = as.matrix(gene.expr)
+    }        
     gene.var = gene.var[genes.to.keep]
     if (!missing(tech.var.prop)) {        
       tech.var.prop = tech.var.prop[genes.to.keep]
@@ -76,7 +86,7 @@ vam = function(gene.expr, tech.var.prop, center=FALSE, gamma=TRUE){
   n = nrow(gene.expr)
   p = ncol(gene.expr)    
 
-  #----------------------------------------------------------------------------------------------------  
+  #----------------------------------------------------------------------------------------------------    
   # If tech.var.prop was specified, use that to estimate the technical
   # variance, otherwise, just use the sample variance
   #----------------------------------------------------------------------------------------------------    
@@ -92,7 +102,11 @@ vam = function(gene.expr, tech.var.prop, center=FALSE, gamma=TRUE){
   #----------------------------------------------------------------------------------------------------
   # Create simple inverse of diagonal covariance matrix using technical variance
   #----------------------------------------------------------------------------------------------------
-  inv.cov = diag(1/tech.var)        
+  if (p == 1) {
+    inv.cov = as.matrix(1/tech.var)        
+  } else {
+    inv.cov = diag(1/tech.var)
+  }  
     
 #    # Estimate covariance matrix
 #    cov.mat = cov(as.matrix(gene.expr))
@@ -178,7 +192,7 @@ vam = function(gene.expr, tech.var.prop, center=FALSE, gamma=TRUE){
     # Compute p-values using the standard chi-square null distribution
     #------------------------------------------------------------------
   
-    p.values = pchisq(mahalanobis.sq, df=p, lower.tail=F, ncp=ncp)        
+    p.values = pchisq(mahalanobis.sq, df=p, lower.tail=F)        
         
   } else {
     

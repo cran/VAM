@@ -1,7 +1,7 @@
 Package: VAM
 Type: Package
 Title: Variance-Adjusted Mahalanobis
-Version: 0.5.2
+Version: 0.5.3
 Author: H. Robert Frost
 Maintainer: H. Robert Frost <rob.frost@dartmouth.edu>
 Description: Contains logic for cell-specific gene set scoring of single cell RNA sequencing data.
@@ -12,8 +12,7 @@ Suggests: Seurat (>= 4.0.0), SeuratObject (>= 4.0.0), sctransform (>=
 License: GPL (>= 2)
 Copyright: Dartmouth College
 Encoding: UTF-8
-LazyData: true
 NeedsCompilation: no
-Packaged: 2021-03-15 01:05:51 UTC; robfrost
+Packaged: 2021-07-20 16:07:57 UTC; robfrost
 Repository: CRAN
-Date/Publication: 2021-03-15 05:10:02 UTC
+Date/Publication: 2021-07-20 16:50:02 UTC
