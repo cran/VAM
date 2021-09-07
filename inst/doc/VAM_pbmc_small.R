@@ -64,11 +64,41 @@ if (requireNamespace("Seurat", quietly=TRUE)) {
 
 
 ###################################################
-### code chunk number 6: VAM_pbmc_small.Rnw:86-97
+### code chunk number 6: VAM_pbmc_small.Rnw:84-93
+###################################################
+if (requireNamespace("Seurat", quietly=TRUE)) {
+	gene.weights = list(c(2,2,1,1,1))
+	pbmc.vam.weights = vamForSeurat(seurat.data=SeuratObject::pbmc_small,
+	    gene.weights=gene.weights,
+	    gene.set.collection=gene.set.collection,
+	    center=F, gamma=T, sample.cov=F, return.dist=T)
+} else {
+	message("Seurat package not available! Not executing associated vignette content.")
+}	
+
+
+###################################################
+### code chunk number 7: VAM_pbmc_small.Rnw:100-111
 ###################################################
 if (requireNamespace("Seurat", quietly=TRUE)) {
 	Seurat::DefaultAssay(object = pbmc.vam) = "VAMcdf"
 	Seurat::FeaturePlot(pbmc.vam, reduction="tsne", features=gene.set.name)
+} else {
+	message("Seurat package not available! Not executing associated vignette content.")
+	par(mar = c(0,0,0,0))
+	plot(c(0, 1), c(0, 1), ann = F, bty = 'n', type = 'n', xaxt = 'n', yaxt = 'n')
+	text(x = 0.5, y = 0.5,paste("Seurat package not available!\n",
+					 "FeaturePlot not generated."),
+	cex = 1.6, col = "black")
+}	
+
+
+###################################################
+### code chunk number 8: VAM_pbmc_small.Rnw:116-127
+###################################################
+if (requireNamespace("Seurat", quietly=TRUE)) {
+	Seurat::DefaultAssay(object = pbmc.vam.weights) = "VAMcdf"
+	Seurat::FeaturePlot(pbmc.vam.weights, reduction="tsne", features=gene.set.name)
 } else {
 	message("Seurat package not available! Not executing associated vignette content.")
 	par(mar = c(0,0,0,0))

@@ -10,11 +10,12 @@ Executes the Variance-adjusted Mahalanobis (VAM) method (\code{\link{vamForColle
     to 1 (the normalized counts output by \code{SCTransform} should have variance 1 if there is only technical variation).
 }
 \usage{
-    vamForSeurat(seurat.data, gene.set.collection, center=FALSE, gamma=TRUE, 
-        sample.cov=FALSE, return.dist=FALSE)
+    vamForSeurat(seurat.data, gene.weights, gene.set.collection, 
+    	center=FALSE, gamma=TRUE, sample.cov=FALSE, return.dist=FALSE)
 }
 \arguments{
 \item{seurat.data}{The Seurat object that holds the scRNA-seq data. Assumes normalization has already been performed.}
+\item{gene.weights}{See description in \code{\link{vamForCollection}}} 
 \item{gene.set.collection}{List of m gene sets for which scores are computed.
     Each element in the list corresponds to a gene set and the list element is a vector
     of indices for the genes in the set. The index value is defined relative to the

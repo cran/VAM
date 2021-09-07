@@ -79,6 +79,20 @@ if (requireNamespace("Seurat", quietly=TRUE)) {
 }	
 @
 
+Create gene weights that prioritize the first two genes in the set and execute VAM using the weights.
+
+<<fig=F, echo=T>>=
+if (requireNamespace("Seurat", quietly=TRUE)) {
+	gene.weights = list(c(2,2,1,1,1))
+	pbmc.vam.weights = vamForSeurat(seurat.data=SeuratObject::pbmc_small,
+	    gene.weights=gene.weights,
+	    gene.set.collection=gene.set.collection,
+	    center=F, gamma=T, sample.cov=F, return.dist=T)
+} else {
+	message("Seurat package not available! Not executing associated vignette content.")
+}	
+@
+
 \section{Visualize VAM scores}
 
 Visualize VAM scores using Seurat FeaturePlot(). The default Assay must first be changed to "VAMcdf".
@@ -87,6 +101,22 @@ Visualize VAM scores using Seurat FeaturePlot(). The default Assay must first be
 if (requireNamespace("Seurat", quietly=TRUE)) {
 	Seurat::DefaultAssay(object = pbmc.vam) = "VAMcdf"
 	Seurat::FeaturePlot(pbmc.vam, reduction="tsne", features=gene.set.name)
+} else {
+	message("Seurat package not available! Not executing associated vignette content.")
+	par(mar = c(0,0,0,0))
+	plot(c(0, 1), c(0, 1), ann = F, bty = 'n', type = 'n', xaxt = 'n', yaxt = 'n')
+	text(x = 0.5, y = 0.5,paste("Seurat package not available!\n",
+					 "FeaturePlot not generated."),
+	cex = 1.6, col = "black")
+}	
+@
+
+Visualize the weighted VAM scores.
+
+<<fig=T, echo=T>>=
+if (requireNamespace("Seurat", quietly=TRUE)) {
+	Seurat::DefaultAssay(object = pbmc.vam.weights) = "VAMcdf"
+	Seurat::FeaturePlot(pbmc.vam.weights, reduction="tsne", features=gene.set.name)
 } else {
 	message("Seurat package not available! Not executing associated vignette content.")
 	par(mar = c(0,0,0,0))

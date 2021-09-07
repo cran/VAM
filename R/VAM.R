@@ -22,6 +22,8 @@
 # -tech.var.prop: Vector of technical variance proportions for each of the p genes. If specified, the Mahalanobis distance
 #          will be computed using a diagonal covariance matrix generated using these proportions. If not specified, the
 #          Mahalanobis distances will be computed using a diagonal covariance matrix generated from the sample variances.
+# -gene.weights: Optional vector of gene weights. If specified, weights must be > 0. 
+#          Larger weights will increase the influence of a given gene in the computation of the Mahalanobis distance.
 # -center: If true will mean center the values in the computation of the Mahalanobis statistic.
 #          If false, will compute the Mahalanobis distance from the origin. Default is F.
 # -gamma: If true, will fit a gamma distribution to the non-zero squared Mahalanobis distances computed from 
@@ -37,7 +39,7 @@
 #
 #
 
-vam = function(gene.expr, tech.var.prop, center=FALSE, gamma=TRUE){    
+vam = function(gene.expr, tech.var.prop, gene.weights, center=FALSE, gamma=TRUE){    
   if (missing(gene.expr)) {
     stop("Missing gene expression matrix!")
   }    
@@ -60,6 +62,9 @@ vam = function(gene.expr, tech.var.prop, center=FALSE, gamma=TRUE){
     if (!missing(tech.var.prop)) {    
       tech.var.prop = tech.var.prop[genes.to.keep]
     }
+    if (!missing(gene.weights)) {        
+      gene.weights = gene.weights[genes.to.keep]
+    }     
   }  
     
   #----------------------------------------------------------------------------------------------------  
@@ -81,6 +86,9 @@ vam = function(gene.expr, tech.var.prop, center=FALSE, gamma=TRUE){
     if (!missing(tech.var.prop)) {        
       tech.var.prop = tech.var.prop[genes.to.keep]
     }
+    if (!missing(gene.weights)) {        
+      gene.weights = gene.weights[genes.to.keep]
+    } 
   }
   
   n = nrow(gene.expr)
@@ -97,6 +105,17 @@ vam = function(gene.expr, tech.var.prop, center=FALSE, gamma=TRUE){
     tech.var = tech.var.prop * gene.var 
   } else {
     tech.var = gene.var
+  }
+  
+  #----------------------------------------------------------------------------------------------------    
+  # If gene.weights was specified, use the weights to adjust the technical variance.
+  #----------------------------------------------------------------------------------------------------    
+  if (!missing(gene.weights)) {
+    invalid.weights = which(gene.weights <= 0)
+    if (length(invalid.weights) > 0) {
+      stop("gene.weights contains values <= 0!")
+    }
+    tech.var = tech.var/gene.weights
   }
   
   #----------------------------------------------------------------------------------------------------
@@ -237,6 +256,10 @@ vam = function(gene.expr, tech.var.prop, center=FALSE, gamma=TRUE){
 #              See createGeneSetCollection() for utility function that can be used to 
 #              help generate this list of indices.
 # -tech.var.prop: See description in vam().
+# -gene.weights: See description in vam(). If specified as a single vector of weights, weights must be specified for all p genes and the
+#              the same weights are used for all gene sets.
+#              To use different weights for each set, specify as a list of the same length as the gene.set.collection list.
+#              In this case, each list element should be a vector of gene weights of the same length as the size of the corresponding gene set.
 # -center: See description in vam().
 # -gamma: See description in vam().
 #
@@ -246,7 +269,7 @@ vam = function(gene.expr, tech.var.prop, center=FALSE, gamma=TRUE){
 #     -cdf.value: n x m matrix of 1 minus the one-sided p-values for the m gene sets and n samples/cells. 
 #     -distance.sq: n x m matrix of squared adjusted Mahalanobis distances for the m gene sets and n samples/cells. 
 #
-vamForCollection = function(gene.expr, gene.set.collection, tech.var.prop, center=FALSE, gamma=TRUE) {
+vamForCollection = function(gene.expr, gene.set.collection, tech.var.prop, gene.weights, center=FALSE, gamma=TRUE) {
     
   if (missing(gene.expr)) {
     stop("Missing gene expression matrix!")
@@ -263,6 +286,24 @@ vamForCollection = function(gene.expr, gene.set.collection, tech.var.prop, cente
       stop("Length of tech.var.prop ", length(tech.var.prop), 
           " does not match the number of genes in the expression matrix ", p)
     }
+  }
+  
+  if (!missing(gene.weights)) {
+    if (is.list(gene.weights)) {
+      if (length(gene.weights) != length(gene.set.collection)) {
+        stop("Length of gene.weights list ", length(gene.weights), 
+            " does not match the number of gene sets.")
+      }
+    } else {
+      if (length(gene.weights) != p) {
+        stop("Length of gene.weights ", length(gene.weights), 
+            " does not match the number of genes in the expression matrix ", p)
+      }
+    }
+  } else {
+    # Default weights to 1
+    message("gene.weights not specified, defaulting all weights to 1")
+    gene.weights = rep(1, p)
   }
   
   cell.ids = rownames(gene.expr)
@@ -293,6 +334,15 @@ vamForCollection = function(gene.expr, gene.set.collection, tech.var.prop, cente
     }
     set.exprs = gene.expr[,set.members]   
 
+    if (is.list(gene.weights)) {
+      set.weights = gene.weights[[i]]
+      if (length(set.weights) != length(set.members)) {
+        stop("Length of gene weights for set ", i, " does not equal the size of the set!")
+      }
+    } else {
+      set.weights = gene.weights[set.members]
+    }
+    
     if (set.size == 1) {
       # Force vector to matrix
       warning("Gene set ", i, " has just a single member!")
@@ -304,9 +354,9 @@ vamForCollection = function(gene.expr, gene.set.collection, tech.var.prop, cente
       # list of vectors of gene indices as created via createGeneSetCollection()
       names(tech.var.prop) = colnames(gene.expr)
       vam.results = vam(gene.expr=set.exprs, tech.var.prop=tech.var.prop[set.members],
-          center=center, gamma=gamma)
+          gene.weights=set.weights, center=center, gamma=gamma)
     } else {
-      vam.results = vam(gene.expr=set.exprs, center=center, gamma=gamma)
+      vam.results = vam(gene.expr=set.exprs, gene.weights=set.weights, center=center, gamma=gamma)
     }
     results$distance.sq[,i] = vam.results$distance.sq
     results$cdf.value[,i] = vam.results$cdf.value

@@ -17,6 +17,7 @@
 #
 # -seurat.data: The Seurat object that holds the scRNA-seq data. 
 #  Assumes normalization has already been performed.
+# -gene.weights: See vamForCollection() function in VAM.R for details.
 # -gene.set.collection: List of m gene sets for which scores are computed.
 #  Each element in the list corresponds to a gene set and the list element is a vector
 #  of indices for the genes in the set. The index value is defined relative to the
@@ -37,6 +38,7 @@
 #
 #
 vamForSeurat = function(seurat.data,
+    gene.weights,
     gene.set.collection, 
     center=FALSE,
     gamma=TRUE,
@@ -83,16 +85,25 @@ vamForSeurat = function(seurat.data,
   } else {    
     stop("Unsupported active assay: ", seurat.data@active.assay)
   }    
+  
+  if (missing(gene.weights)) {
+    # Default weights to 1
+    message("gene.weights not specified, defaulting all weights to 1")
+    gene.weights = rep(1, nrow(normalized.counts))    
+  }
     
   # Compute the gene set-specific and variance-adjusted Mahalanobis matrix on the normalized counts
   if (sample.cov) {
     vam.results = vamForCollection(gene.expr=Matrix::t(normalized.counts),
         gene.set.collection=gene.set.collection,
+        gene.weights=gene.weights,
         center=center, gamma=gamma)  
   } else {
     vam.results = vamForCollection(gene.expr=Matrix::t(normalized.counts),
         gene.set.collection=gene.set.collection,
-        tech.var.prop = tech.var.prop, center=center, gamma=gamma)
+        tech.var.prop = tech.var.prop, 
+        gene.weights=gene.weights,
+        center=center, gamma=gamma)
   }
   
   # Create Assay object to store the squared distances

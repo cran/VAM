@@ -11,7 +11,7 @@ cell are further from the mean (\code{center=T}) or origin (\code{center=F}) tha
 of uncorrelated technical noise, i.e., gene expression variance is purely technical and all genes are uncorrelated.
 }
 \usage{
-    vam(gene.expr, tech.var.prop, center=FALSE, gamma=TRUE)
+    vam(gene.expr, tech.var.prop, gene.weights, center=FALSE, gamma=TRUE)
 }
 \arguments{
 \item{gene.expr}{An n x p matrix of gene expression values for n cells and p genes.} 
@@ -19,7 +19,11 @@ of uncorrelated technical noise, i.e., gene expression variance is purely techni
     If specified, the Mahalanobis distance will be computed using a diagonal covariance matrix generated using these proportions. 
     If not specified, the Mahalanobis distances will be computed using a diagonal covariance matrix generated from the 
     sample variances.}
-\item{center}{If true will mean center the values in the computation of the Mahalanobis statistic.
+\item{gene.weights}{Optional vector of gene weights. If specified, weights must be > 0. 
+    The weights are used to adjust the gene variance values included in the computation of the modified Mahalanobis distances.
+    Specifically, the gene variance is divided by the gene weight. This adjustment means that large 
+    weights will increase the influence of a given gene in the computation of the modified Mahalanobis distance.}    
+\item{center}{If true, will mean center the values in the computation of the Mahalanobis statistic.
     If false, will compute the Mahalanobis distance from the origin. Default is F.}
 \item{gamma}{If true, will fit a gamma distribution to the non-zero squared Mahalanobis distances computed from 
     a row-permuted version of \code{gene.expr}. The estimated gamma distribution will be used to compute
@@ -42,4 +46,9 @@ A \code{data.frame} with the following elements (row names will match row names 
     tech.var.prop=runif(10)
     # Execute VAM to compute scores for the 10 genes on each cell
     vam(gene.expr=gene.expr, tech.var.prop=tech.var.prop)
+    # Create weights that prioritize the first 5 genes
+    gene.weights = c(rep(2,5), rep(1,5))
+    # Execute VAM using the weights
+    vam(gene.expr=gene.expr, tech.var.prop=tech.var.prop, 
+    	gene.weights=gene.weights)    
 }
