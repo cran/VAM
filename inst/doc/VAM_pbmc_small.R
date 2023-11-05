@@ -1,13 +1,13 @@
 ### R code from vignette source 'VAM_pbmc_small.Rnw'
 
 ###################################################
-### code chunk number 1: VAM_pbmc_small.Rnw:15-16
+### code chunk number 1: VAM_pbmc_small.Rnw:16-17
 ###################################################
 library(VAM)
 
 
 ###################################################
-### code chunk number 2: VAM_pbmc_small.Rnw:23-31
+### code chunk number 2: VAM_pbmc_small.Rnw:24-32
 ###################################################
 if (requireNamespace("Seurat", quietly=TRUE)) {
 	SeuratObject::pbmc_small
@@ -20,7 +20,7 @@ if (requireNamespace("Seurat", quietly=TRUE)) {
 
 
 ###################################################
-### code chunk number 3: VAM_pbmc_small.Rnw:38-54
+### code chunk number 3: VAM_pbmc_small.Rnw:39-55
 ###################################################
 if (requireNamespace("Seurat", quietly=TRUE)) {
 	gene.set.name = "Test"
@@ -41,7 +41,7 @@ if (requireNamespace("Seurat", quietly=TRUE)) {
 
 
 ###################################################
-### code chunk number 4: VAM_pbmc_small.Rnw:61-68
+### code chunk number 4: VAM_pbmc_small.Rnw:62-69
 ###################################################
 if (requireNamespace("Seurat", quietly=TRUE)) {
 	pbmc.vam = vamForSeurat(seurat.data=SeuratObject::pbmc_small,
@@ -53,18 +53,18 @@ if (requireNamespace("Seurat", quietly=TRUE)) {
 
 
 ###################################################
-### code chunk number 5: VAM_pbmc_small.Rnw:73-79
+### code chunk number 5: VAM_pbmc_small.Rnw:74-80
 ###################################################
 if (requireNamespace("Seurat", quietly=TRUE)) {
-	pbmc.vam@assays$VAMdist[1,1:10]
-	pbmc.vam@assays$VAMcdf[1,1:10]
+	pbmc.vam@assays$VAMdist@data[1,1:10]
+	pbmc.vam@assays$VAMcdf@data[1,1:10]
 } else {
 	message("Seurat package not available! Not executing associated vignette content.")
 }	
 
 
 ###################################################
-### code chunk number 6: VAM_pbmc_small.Rnw:84-93
+### code chunk number 6: VAM_pbmc_small.Rnw:85-94
 ###################################################
 if (requireNamespace("Seurat", quietly=TRUE)) {
 	gene.weights = list(c(2,2,1,1,1))
@@ -78,7 +78,7 @@ if (requireNamespace("Seurat", quietly=TRUE)) {
 
 
 ###################################################
-### code chunk number 7: VAM_pbmc_small.Rnw:100-111
+### code chunk number 7: VAM_pbmc_small.Rnw:101-112
 ###################################################
 if (requireNamespace("Seurat", quietly=TRUE)) {
 	Seurat::DefaultAssay(object = pbmc.vam) = "VAMcdf"
@@ -94,7 +94,7 @@ if (requireNamespace("Seurat", quietly=TRUE)) {
 
 
 ###################################################
-### code chunk number 8: VAM_pbmc_small.Rnw:116-127
+### code chunk number 8: VAM_pbmc_small.Rnw:117-128
 ###################################################
 if (requireNamespace("Seurat", quietly=TRUE)) {
 	Seurat::DefaultAssay(object = pbmc.vam.weights) = "VAMcdf"

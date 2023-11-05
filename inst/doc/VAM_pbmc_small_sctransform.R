@@ -69,8 +69,8 @@ if (requireNamespace("Seurat", quietly=TRUE)) {
 ### code chunk number 6: VAM_pbmc_small_sctransform.Rnw:86-92
 ###################################################
 if (requireNamespace("Seurat", quietly=TRUE)) {
-	pbmc.vam@assays$VAMdist[1,1:10]
-	pbmc.vam@assays$VAMcdf[1,1:10]
+	pbmc.vam@assays$VAMdist@data[1,1:10]
+	pbmc.vam@assays$VAMcdf@data[1,1:10]
 } else {
 	message("Seurat package not available! Not executing associated vignette content.")
 }

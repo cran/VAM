@@ -62,23 +62,37 @@ vamForSeurat = function(seurat.data,
   if (seurat.data@active.assay == "RNA") {
 
     # Use the log normalized counts
-    normalized.counts = seurat.data@assays$RNA@data
+    if (is(seurat.data@assays$RNA, "Assay5")) {
+      normalized.counts = seurat.data@assays$RNA@layers$data
+      colnames(normalized.counts) = colnames(seurat.data)
+    } else {
+      normalized.counts = seurat.data@assays$RNA@data
+    }
     
     if (!sample.cov) {
       # For the standard normalization pipeline, 
       # get the proportion of variance that appears technical according to FindVariableFeatures
-      tech.var.prop = getTechVarProp(seurat.data)
+      if (is(seurat.data@assays$RNA, "Assay5")) {
+        tech.var.prop = getTechVarPropV5(seurat.data)
+      } else {
+        tech.var.prop = getTechVarProp(seurat.data)
+      }
     }
     
   } else if (seurat.data@active.assay == "SCT") {
     
     # Use the log1p transformed corrected counts. The SCT correction process reverses the regression model
     # to generate counts that approximate what would be found if all cells were sequenced to the same depth.
-    normalized.counts = seurat.data@assays$SCT@data    
+    if (is(seurat.data@assays$SCT,"Assay5")) {
+      normalized.counts = seurat.data@assays$SCT@layers$data 
+      colnames(normalized.counts) = colnames(seurat.data)
+    } else {
+      normalized.counts = seurat.data@assays$SCT@data    
+    }
     
     if (!sample.cov) {
       # Get the proportion of variance that appears technical according to the Pearson residuals (these
-      # will have variance 1 if entirely technical)
+      # will have variance 1 if entirely technical); v3 and v5 assay logic is the same
       tech.var.prop = getTechVarPropForSCT(seurat.data)
     }
         
@@ -119,7 +133,6 @@ vamForSeurat = function(seurat.data,
   return (seurat.data)
 }  
 
-
 #
 # Helper method that computes proportion of technical variance for each gene
 # based on the standard normalization method.
@@ -144,6 +157,32 @@ getTechVarProp = function(seurat.data) {
   # For NaN entries (vst var is 0), set prop.tech.var to 1
   tech.var.prop[which(is.nan(tech.var.prop))] = 1  
     
+  return (tech.var.prop)  
+}
+
+getTechVarPropV5 = function(seurat.data) {
+  
+  if (!is(seurat.data@assays$RNA,"Assay5")) {
+    stop("Trying to call Assay5 logic on non-V5 object!")
+  }
+  p = nrow(seurat.data@assays$RNA@layers$data)
+  
+  # Ensure we have vst results
+  meta.data.cols = colnames(seurat.data@assays$RNA@meta.data)
+  if (length(meta.data.cols) <= 3 
+      | meta.data.cols[2] != "vf_vst_counts_variance" 
+      | meta.data.cols[3] != "vf_vst_counts_variance.expected") { 
+    message("Did not find vst variance decomposition, setting technical variance proportion to 1")
+    return (rep(1, p))
+  }
+  
+  # For the standard normalization pipeline, 
+  # get the proportion of variance that appears technical according to FindVariableFeatures
+  tech.var.prop = seurat.data@assays$RNA@meta.data[,3]/seurat.data@assays$RNA@meta.data[,2]		
+  
+  # For NaN entries (vst var is 0), set prop.tech.var to 1
+  tech.var.prop[which(is.nan(tech.var.prop))] = 1  
+  
   return (tech.var.prop)  
 }
 
